@@ -1,0 +1,98 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 1. ПОЛЬЗОВАТЕЛЬ (Стандарт NextAuth + корзина)
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String    @unique
+  passwordHash  String?   // Хеш пароля для обычной регистрации
+  createdAt     DateTime  @default(now())
+
+  // Связи NextAuth (нужны для управления сессиями)
+  accounts      Account[]
+  sessions      Session[]
+
+  // Наша связь: у каждого юзера есть одна корзина
+  cart          Cart?
+}
+
+// 2. КОРЗИНА ()
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String     @unique // Один юзер = одна корзина
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Связь: внутри корзины лежит список товаров
+  items     CartItem[]
+}
+
+// 3. ЭЛЕМЕНТ КОРЗИНЫ (Связующая таблица: какой товар и сколько)
+model CartItem {
+  id        String   @id @default(uuid())
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int      @default(1) // Количество товара (по умолчанию 1)
+
+  // Уникальный индекс: один и тот же товар не будет дублироваться строками,
+  // вместо этого мы будем просто увеличивать quantity
+  @@unique([cartId, productId])
+}
+
+// 4. ТОВАР (Спортивная одежда)
+model Product {
+  id        String     @id @default(uuid())
+  name      String
+  price     Float
+  imageUrl  String     // URL картинки товара в облаке
+  
+  cartItems CartItem[]
+}
+
+// ========================================================
+// СЛУЖЕБНЫЕ ТАБЛИЦЫ ДЛЯ NEXTAUTH (Просто скопируй их)
+// Они нужны, чтобы библиотека сама управляла сессиями пользователей
+// ========================================================
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
