@@ -1,7 +1,7 @@
 import { prisma } from "@/prisma/prisma.client";
 import { notFound } from "next/navigation";
 import { ImageWithFallback } from "@/src/shared/ui/ImageWithFallback";
-import { addToCartAction } from "@/src/features/cart/model/add-to-cart";
+import { addToCartAction } from "@/src/features/cart/model/actions";
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params;

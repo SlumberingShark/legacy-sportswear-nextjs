@@ -4,7 +4,6 @@ import { useState, useTransition } from "react";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/src/shared";
-import { prisma } from "../../../../prisma/prisma.client";
 import { updateQuantityAction, removeItemAction } from '../../../features/cart/model/actions'
 
 
