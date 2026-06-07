@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  serverExternalPackages: ["@prisma/client"],
+  devIndicators: {
+    buildActivity: false, // Отключает значок анимации сборки в углу
+  },
 };
 
 export default nextConfig;
