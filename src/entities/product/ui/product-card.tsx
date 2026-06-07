@@ -20,7 +20,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
 			{/* ССЫЛКА-ОБЕРТКА: растягивается на всю карточку */}
 			<Link href={`/product/${id}`} className="absolute inset-0 z-0" aria-label={name} />
 
-			<div className="relative aspect-[3/4] bg-zinc-100 overflow-hidden rounded-xl mb-4">
+			<div className="relative aspect-3/4 bg-zinc-100 overflow-hidden rounded-xl mb-4">
 				<ImageWithFallback src={image} alt={name} className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500 ease-out" />
 
 				{/* Кнопка добавления (z-10 выше z-0 ссылки) */}
@@ -39,13 +39,13 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
 				)}
 			</div>
 
-			<div className="flex flex-col flex-grow space-y-1 px-1">
+			<div className="flex flex-col grow space-y-1 px-1">
 				{colors.length > 0 && (
 					<div className="flex gap-1.5 mb-1 items-center">
 						{colors.map((color, colorIndex) => (
 							<div
 								key={colorIndex}
-								className="w-3.5 h-3.5 rounded-full border border-zinc-200 cursor-pointer p-[1px] hover:scale-110 transition-transform"
+								className="w-3.5 h-3.5 rounded-full border border-zinc-200 cursor-pointer p-px hover:scale-110 transition-transform"
 								style={{ backgroundColor: color }}
 								title={color}
 							/>
